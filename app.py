@@ -26,7 +26,7 @@ UPLOAD_FOLDER ='static/uploads/'
 DOWNLOAD_FOLDER = 'static/downloads/'
 ALLOWED_EXTENSIONS = {'jpg', 'png','.jpeg'}
 
-lineaccesstoken = ''
+lineaccesstoken = 'dA/NAfc6PmFtzMOBNwi3CqNZLRnoBqzfAkWoy0qRs75P3DnXL+agTuoqnZ+5wf1ExCx/LVPtpOW0jgaISIIOedPTgUe7W/XwFZmZ+N/8zASSYHVpHSW2DVxiwA301SIo/mBV4H/N4Ud37s0cX5Le6AdB04t89/1O/w1cDnyilFU='
 
 line_bot_api = LineBotApi(lineaccesstoken)
 
@@ -108,7 +108,7 @@ def callback():
     no_event = len(decoded['events'])
     for i in range(no_event):
             event = decoded['events'][i]
-            event_handle(event)
+            event_handle(event,json_line)
 
     # เชื่อมต่อกับ dialogflow
     #intent = decoded["queryResult"]["intent"]["displayName"] 
@@ -124,9 +124,9 @@ def reply(intent,text,reply_token,id,disname):
     text_message = TextSendMessage(text="ทดสอบ")
     line_bot_api.reply_message(reply_token,text_message)
 
-def event_handle(event):
+def event_handle(event,json_line):
     print(event)
-    try: 
+    try:
         userId = event['source']['userId']
     except:
         print('error cannot get userId')
@@ -149,8 +149,27 @@ def event_handle(event):
 
     if msgType == "text":
         msg = str(event["message"]["text"])
-        replyObj = TextSendMessage(text=msg)
-        line_bot_api.reply_message(rtoken, replyObj)
+        if msg == "สวัสดี":
+            replyObj = TextSendMessage(text="มาเอารัย")
+            line_bot_api.reply_message(rtoken, replyObj)
+        elif msg == "ไปไหนดี":
+            replyObj = TextSendMessage(text="ภูเก็ต")
+            line_bot_api.reply_message(rtoken, replyObj)
+        elif msg == "กินน้ำมั้ย":
+            replyObj = TextSendMessage(text="ไม่ล่ะ")
+            line_bot_api.reply_message(rtoken, replyObj)
+        elif msg == "covid" :
+            url = "https://covid19.ddc.moph.go.th/api/Cases/today-cases-all"
+            response = requests.get(url)
+            response = response.json()
+            replyObj = TextSendMessage(text=str(response))
+            line_bot_api.reply_message(rtoken, replyObj)
+        else :
+            headers = request.headers
+            json_headers = ({k:v for k, v in headers.items()})
+            json_headers.update({'Host':'bots.dialogflow.com'})
+            url = "https://dialogflow.cloud.google.com/v1/integrations/line/webhook/426b6909-cfbf-4763-b297-001bcb34fc1a"
+            requests.post(url,data=json_line, headers=json_headers)
     elif msgType == "image":
         try:
             message_content = line_bot_api.get_message_content(event['message']['id'])
