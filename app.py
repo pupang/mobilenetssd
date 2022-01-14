@@ -150,13 +150,13 @@ def event_handle(event,json_line):
     if msgType == "text":
         msg = str(event["message"]["text"])
         if msg == "สวัสดี":
-            replyObj = TextSendMessage(text="ก็มาดิ ฮู้กๆ")
+            replyObj = TextSendMessage(text="มาเอารัย")
             line_bot_api.reply_message(rtoken, replyObj)
         elif msg == "ไปไหนดี":
-            replyObj = TextSendMessage(text="อยู่บ้านเถอะ")
+            replyObj = TextSendMessage(text="ภูเก็ต")
             line_bot_api.reply_message(rtoken, replyObj)
-        elif msg == "เหมียว":
-            replyObj = TextSendMessage(text="น้องแมว")
+        elif msg == "กินน้ำมั้ย":
+            replyObj = TextSendMessage(text="ไม่ล่ะ")
             line_bot_api.reply_message(rtoken, replyObj)
         elif msg == "covid" :
             url = "https://covid19.ddc.moph.go.th/api/Cases/today-cases-all"
@@ -168,7 +168,7 @@ def event_handle(event,json_line):
             headers = request.headers
             json_headers = ({k:v for k, v in headers.items()})
             json_headers.update({'Host':'bots.dialogflow.com'})
-            url = "https://bots.dialogflow.com/line/426b6909-cfbf-4763-b297-001bcb34fc1a/webhook"
+            url = "https://dialogflow.cloud.google.com/v1/integrations/line/webhook/426b6909-cfbf-4763-b297-001bcb34fc1a"
             requests.post(url,data=json_line, headers=json_headers)
     elif msgType == "image":
         try:
